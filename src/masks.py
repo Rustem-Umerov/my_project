@@ -8,17 +8,20 @@ def check_user_input(user_input: str, length_number: int) -> str:
     пользователя не соответствует критериям, пользователь должен
     ввести новые данные."""
 
-    while len(user_input) != length_number or not user_input.isdigit():
+    while True:
+        number_user_input = user_input.split()[-1]
+
+        if len(number_user_input) == length_number and number_user_input.isdigit():
+            return user_input
+
         print(
             f"""
         Вы ввели неверный номер.
-        Должно быть не более {length_number} символов.
+        Должно быть не более или не менее {length_number} символов.
         Номер должен состоять только из цифр.
         """
         )
         user_input = input("Повторите попытку: ").strip()
-
-    return user_input
 
 
 def get_mask_card_number(card_number: str) -> str:

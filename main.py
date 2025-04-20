@@ -1,5 +1,5 @@
-from src.masks import (LENGTH_OF_ACCOUNT_NUMBER, LENGTH_OF_CARD_NUMBER, check_user_input, get_mask_account,
-                       get_mask_card_number)
+from src.masks import LENGTH_OF_ACCOUNT_NUMBER, LENGTH_OF_CARD_NUMBER, check_user_input
+from src.widget import mask_account_card
 
 
 def main() -> None:
@@ -9,14 +9,14 @@ def main() -> None:
     3) Возвращает пользовательские данные в замаскированном формате."""
 
     # Код ниже выполняет работу с номером банковской карты.
-    user_input_card = input("Введите номер карты: ").strip()
+    user_input_card = input("Введите название и номер карты: ").strip()
     correct_card = check_user_input(user_input_card, LENGTH_OF_CARD_NUMBER)
-    mask_card_number = get_mask_card_number(correct_card)
+    mask_card_number = mask_account_card(correct_card)
 
     # Код ниже выполняет работу с номером банковского счета.
     user_input_account = input("Введите номер счета: ").strip()
     correct_account = check_user_input(user_input_account, LENGTH_OF_ACCOUNT_NUMBER)
-    mask_account_number = get_mask_account(correct_account)
+    mask_account_number = mask_account_card(correct_account)
 
     # Ниже вывод готового результата.
     print(mask_card_number, mask_account_number, sep="\n")
