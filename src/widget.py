@@ -1,27 +1,32 @@
-from src.masks import get_mask_account, get_mask_card_number
+import re
+
+from src.masks import check_user_input, get_mask_account, get_mask_card_number
+
+LENGTH_OF_CARD_NUMBER = 16  # Константа указывающая длину номера банковской карты
+LENGTH_OF_ACCOUNT_NUMBER = 20  # Константа указывающая длину номера банковского счета
 
 
 def mask_account_card(type_and_number: str) -> str:
-    """Функция принимает один аргумент — строку, содержащую тип и номер карты или счета.
+    """Функция принимает один аргумент — строку, содержащую тип и номер карты или номер счета.
     Возвращает строку с замаскированным номером."""
 
-    # Делит входную строку на список
-    str_split = type_and_number.split()
+    if re.match(r"сч[её]т", type_and_number, re.IGNORECASE):
+        return re.sub(r"\d{20}", lambda m: get_mask_account(m.group(0)), type_and_number)
+    return re.sub(r"\d{16}", lambda m: get_mask_card_number(m.group(0)), type_and_number)
 
-    # Далее проверка элементов списка. Если первый элемент равен "счет",
-    # то последний элемент списка передается в функцию для номера счета,
-    # иначе в функцию для номера карты.
-    if str_split[0].lower() == "счет" or str_split[0].lower() == "счёт":
-        masked_number = get_mask_account(str_split[-1])
-        result = [str_split[0], masked_number]
 
-        return " ".join(result)
+def output_result(user_input: str) -> str:
+    """Функция выводит итоговый результат.
+    Сначала данные проверяются. Потом происходит маскировка данных."""
 
-    masked_card = get_mask_card_number(str_split[-1])
-    del str_split[-1]
-    result = str_split + [masked_card]
+    if re.match(r"сч[её]т", user_input, re.IGNORECASE):
+        correct_card = check_user_input(user_input, LENGTH_OF_ACCOUNT_NUMBER)
+        result_1 = mask_account_card(correct_card)
+        return result_1
 
-    return " ".join(result)
+    correct_card = check_user_input(user_input, LENGTH_OF_CARD_NUMBER)
+    result_2 = mask_account_card(correct_card)
+    return result_2
 
 
 def get_date(str_data: str) -> str:

@@ -1,25 +1,19 @@
-from src.masks import LENGTH_OF_ACCOUNT_NUMBER, LENGTH_OF_CARD_NUMBER, check_user_input
-from src.widget import mask_account_card
+from src.widget import output_result
 
 
 def main() -> None:
     """Данная функция выполняет:
-    1) Принимает от пользователя данные (номер банковской карты и номер банковского счета).
-    2) Проверяет правильность введенных пользователем данных.
-    3) Возвращает пользовательские данные в замаскированном формате."""
+    - Принимает от пользователя данные (номер банковской карты и номер банковского счета).
+    Далее передает пользовательские данные в функцию, которая:
+    - Проверяет правильность введенных пользователем данных.
+    - Возвращает пользовательские данные в замаскированном формате."""
 
     # Код ниже выполняет работу с номером банковской карты.
-    user_input_card = input("Введите название и номер карты: ").strip()
-    correct_card = check_user_input(user_input_card, LENGTH_OF_CARD_NUMBER)
-    mask_card_number = mask_account_card(correct_card)
-
-    # Код ниже выполняет работу с номером банковского счета.
-    user_input_account = input("Введите номер счета: ").strip()
-    correct_account = check_user_input(user_input_account, LENGTH_OF_ACCOUNT_NUMBER)
-    mask_account_number = mask_account_card(correct_account)
+    user_input = input("Введите счет или название и номер карты: ").strip()
+    mask_result = output_result(user_input)
 
     # Ниже вывод готового результата.
-    print(mask_card_number, mask_account_number, sep="\n")
+    print(mask_result)
 
 
 if __name__ == "__main__":
