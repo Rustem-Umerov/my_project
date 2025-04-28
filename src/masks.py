@@ -1,26 +1,18 @@
-LENGTH_OF_CARD_NUMBER = 16  # Константа указывающая длину номера банковской карты
-LENGTH_OF_ACCOUNT_NUMBER = 20  # Константа указывающая длину номера банковского счета
+import re
 
 
 def check_user_input(user_input: str, length_number: int) -> str:
-    """Функция проверяет входные данные от пользователя, а именно
-    длину номера банковской карты и банковского счета. Если ввод
+    """Функция проверяет входные данные от пользователя. Если ввод
     пользователя не соответствует критериям, пользователь должен
-    ввести новые данные."""
+    повторить ввод данных."""
 
     while True:
-        number_user_input = user_input.split()[-1]
+        pattern = rf"^([a-zA-Zа-яёА-ЯЁ]+\s?){{1,2}}\d{{{length_number}}}\b"
 
-        if len(number_user_input) == length_number and number_user_input.isdigit():
+        if re.search(pattern, user_input):
             return user_input
 
-        print(
-            f"""
-        Вы ввели неверный номер.
-        Должно быть не более или не менее {length_number} символов.
-        Номер должен состоять только из цифр.
-        """
-        )
+        print(error_message(length_number))
         user_input = input("Повторите попытку: ").strip()
 
 
@@ -37,3 +29,15 @@ def get_mask_account(account_number: str) -> str:
     Видны только последние 4 цифры номера, а перед ними — две звездочки"""
 
     return f"**{account_number[-4:]}"
+
+
+def error_message(length_number: int) -> str:
+    """Функция выводит сообщение об ошибке, если пользователь
+    ввел не верные данные."""
+
+    return f"""
+            *** Ошибка - Вы ввели неверные данные ***
+        Введите данные в таком формате:
+        <<"название карты или счета" "номер карты или счета">>
+        Номер должен состоять ровно из {length_number} цифр.
+        """
