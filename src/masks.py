@@ -1,19 +1,23 @@
 import re
 
+LENGTH_OF_CARD_NUMBER = 16  # Константа указывающая длину номера банковской карты
+LENGTH_OF_ACCOUNT_NUMBER = 20  # Константа указывающая длину номера банковского счета
 
-def check_user_input(user_input: str, length_number: int) -> str:
-    """Функция проверяет входные данные от пользователя. Если ввод
-    пользователя не соответствует критериям, пользователь должен
-    повторить ввод данных."""
 
-    while True:
-        pattern = rf"^([a-zA-Zа-яёА-ЯЁ]+\s?){{1,2}}\d{{{length_number}}}\b"
+def is_account(text: str) -> bool:
+    """Проверяет, начинается ли строка на сч[её]т."""
 
-        if re.search(pattern, user_input):
-            return user_input
+    return bool(re.match(r"сч[её]т", text, re.IGNORECASE))
 
-        print(error_message(length_number))
-        user_input = input("Повторите попытку: ").strip()
+
+def check_user_input(user_input: str) -> bool:
+    """Функция проверяет входные данные от пользователя."""
+
+    if is_account(user_input):
+        pattern = rf"^([a-zA-Zа-яёА-ЯЁ]+\s?){{1,2}}\d{{{LENGTH_OF_ACCOUNT_NUMBER}}}\b"
+    else:
+        pattern = rf"^([a-zA-Zа-яёА-ЯЁ]+\s?){{1,2}}\d{{{LENGTH_OF_CARD_NUMBER}}}\b"
+    return bool(re.fullmatch(pattern, user_input))
 
 
 def get_mask_card_number(card_number: str) -> str:
@@ -31,7 +35,7 @@ def get_mask_account(account_number: str) -> str:
     return f"**{account_number[-4:]}"
 
 
-def error_message(length_number: int) -> str:
+def error_message() -> str:
     """Функция выводит сообщение об ошибке, если пользователь
     ввел не верные данные."""
 
@@ -39,5 +43,5 @@ def error_message(length_number: int) -> str:
             *** Ошибка - Вы ввели неверные данные ***
         Введите данные в таком формате:
         <<"название карты или счета" "номер карты или счета">>
-        Номер должен состоять ровно из {length_number} цифр.
+        Номер карты {LENGTH_OF_CARD_NUMBER} цифр, номер счета {LENGTH_OF_ACCOUNT_NUMBER} цифр.
         """
