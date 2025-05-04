@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from src.widget import get_date, mask_account_card, output_result
@@ -27,18 +29,16 @@ def test_mask_account_card(user_input: str, result: str) -> None:
     assert mask_account_card(user_input) == result
 
 
-def test_mask_account_card_error() -> None:
+# Ниже декоратор для тестовой функции test_mask_account_card_error.
+@pytest.mark.parametrize(
+    "invalid_input, result", [(7000792289606361, TypeError), (73654108430135874305, TypeError), (None, TypeError)]
+)
+def test_mask_account_card_error(invalid_input: Any, result: type[TypeError]) -> None:
     """Проверяет, что возникнет ошибка, в том случае, если тип данных, переданных
     в функцию, будет не строковым."""
 
-    with pytest.raises(TypeError):
-        mask_account_card(7000792289606361)  # type: ignore[arg-type]
-
-    with pytest.raises(TypeError):
-        mask_account_card(73654108430135874305)  # type: ignore[arg-type]
-
-    with pytest.raises(TypeError):
-        mask_account_card(None)  # type: ignore[arg-type]
+    with pytest.raises(result):
+        mask_account_card(invalid_input)
 
 
 # Ниже декоратор для тестовой функции test_output_result.
@@ -57,31 +57,26 @@ def test_output_result(user_input: str, result: str) -> None:
     assert output_result(user_input) == result
 
 
-def test_output_result_error() -> None:
+# Ниже декоратор для тестовой функции test_output_result_error.
+@pytest.mark.parametrize(
+    "invalid_input, result",
+    [
+        ("Visa Platinum 111111", ValueError),
+        ("Счет 1111111111", ValueError),
+        ("V@isa P@latinu1m 7000792289606361", ValueError),
+        ("Сче1т 73654108430135874305", ValueError),
+        (7000792289606361, TypeError),
+        (73654108430135874305, TypeError),
+        (None, TypeError),
+    ],
+)
+def test_output_result_error(invalid_input: Any, result: type[ValueError | TypeError]) -> None:
     """Проверяет, что возникнет ошибка:
     ValueError, если строка, содержащая тип и номер карты или номер счета будет содержать ошибки,
     TypeError, если тип данных, переданных в функцию, будет не строковым."""
 
-    with pytest.raises(ValueError):
-        output_result("Visa Platinum 111111")
-
-    with pytest.raises(ValueError):
-        output_result("Счет 1111111111")
-
-    with pytest.raises(ValueError):
-        output_result("V@isa P@latinu1m 7000792289606361")
-
-    with pytest.raises(ValueError):
-        output_result("Сче1т 73654108430135874305")
-
-    with pytest.raises(TypeError):
-        output_result(7000792289606361)  # type: ignore[arg-type]
-
-    with pytest.raises(TypeError):
-        output_result(73654108430135874305)  # type: ignore[arg-type]
-
-    with pytest.raises(TypeError):
-        output_result(None)  # type: ignore[arg-type]
+    with pytest.raises(result):
+        output_result(invalid_input)
 
 
 # Ниже декоратор для тестовой функции test_get_date.
@@ -99,26 +94,23 @@ def test_get_date(str_date: str, result: str) -> None:
     assert get_date(str_date) == result
 
 
-def test_get_date_error() -> None:
+# Ниже декоратор для тестовой функции test_get_date_error.
+@pytest.mark.parametrize(
+    "invalid_input, result",
+    [
+        ("202-03-11T02:26:18.671407", ValueError),
+        ("2024-3-11T02:26:18.671407", ValueError),
+        ("2024-03-1T02:26:18.671407", ValueError),
+        ("", ValueError),
+        (None, TypeError),
+        (20240311, TypeError),
+    ],
+)
+def test_get_date_error(invalid_input: Any, result: type[ValueError | TypeError]) -> None:
     """Проверяет, что возникает ошибка:
     ValueError, если передать в функцию неправильный формат даты и времени,
     TypeError, если тип данных, переданных в функцию, будет не строковым.
     """
 
-    with pytest.raises(ValueError):
-        get_date("202-03-11T02:26:18.671407")
-
-    with pytest.raises(ValueError):
-        get_date("2024-3-11T02:26:18.671407")
-
-    with pytest.raises(ValueError):
-        get_date("2024-03-1T02:26:18.671407")
-
-    with pytest.raises(ValueError):
-        get_date("")
-
-    with pytest.raises(TypeError):
-        get_date(None)  # type: ignore[arg-type]
-
-    with pytest.raises(TypeError):
-        get_date(20240311)  # type: ignore[arg-type]
+    with pytest.raises(result):
+        get_date(invalid_input)

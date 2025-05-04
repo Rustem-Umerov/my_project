@@ -1,14 +1,9 @@
+from typing import Any
+
 import pytest
 
-from src.masks import (
-    LENGTH_OF_ACCOUNT_NUMBER,
-    LENGTH_OF_CARD_NUMBER,
-    check_user_input,
-    error_message,
-    get_mask_account,
-    get_mask_card_number,
-    is_account,
-)
+from src.masks import (LENGTH_OF_ACCOUNT_NUMBER, LENGTH_OF_CARD_NUMBER, check_user_input, error_message,
+                       get_mask_account, get_mask_card_number, is_account)
 
 
 # Ниже декоратор для тестовой функции test_get_mask_card_number.
@@ -29,15 +24,20 @@ def test_get_mask_card_number(number: str, result: str) -> None:
     assert get_mask_card_number(number) == result
 
 
-def test_get_mask_card_number_error() -> None:
+# Ниже декоратор для тестовой функции test_get_mask_card_number_error.
+@pytest.mark.parametrize(
+    "invalid_input, result",
+    [
+        (1596837868705199, TypeError),
+        (None, TypeError),
+    ],
+)
+def test_get_mask_card_number_error(invalid_input: Any, result: type[TypeError]) -> None:
     """Проверяет, что возникнет ошибка, в том случае, если тип данных, переданных
     в функцию, будет не строковым."""
 
-    with pytest.raises(TypeError):
-        get_mask_card_number(1596837868705199)  # type: ignore[arg-type]
-
-    with pytest.raises(TypeError):
-        get_mask_card_number(None)  # type: ignore[arg-type]
+    with pytest.raises(result):
+        get_mask_card_number(invalid_input)
 
 
 # Ниже декоратор для тестовой функции test_get_mask_account.
@@ -53,15 +53,20 @@ def test_get_mask_account(number: str, result: str) -> None:
     assert get_mask_account(number) == result
 
 
-def test_get_mask_account_error() -> None:
+# Ниже декоратор для тестовой функции test_get_mask_account_error.
+@pytest.mark.parametrize(
+    "invalid_input, result",
+    [
+        (73654108430135874305, TypeError),
+        (None, TypeError),
+    ],
+)
+def test_get_mask_account_error(invalid_input: Any, result: type[TypeError]) -> None:
     """Проверяет, что возникнет ошибка, в том случае, если тип данных, переданных
     в функцию, будет не строковым."""
 
-    with pytest.raises(TypeError):
-        get_mask_account(73654108430135874305)  # type: ignore[arg-type]
-
-    with pytest.raises(TypeError):
-        get_mask_account(None)  # type: ignore[arg-type]
+    with pytest.raises(result):
+        get_mask_account(invalid_input)
 
 
 def test_error_message() -> None:
@@ -98,18 +103,21 @@ def test_check_user_input(user_input: str, result: bool) -> None:
     assert check_user_input(user_input) == result
 
 
-def test_check_user_input_error() -> None:
+# Ниже декоратор для тестовой функции test_check_user_input_error.
+@pytest.mark.parametrize(
+    "invalid_input, result",
+    [
+        (7000792289606361, TypeError),
+        (73654108430135874305, TypeError),
+        (None, TypeError),
+    ],
+)
+def test_check_user_input_error(invalid_input: Any, result: type[TypeError]) -> None:
     """Проверяет, что возникнет ошибка, в том случае, если тип данных, переданных
     в функцию, будет не строковым."""
 
-    with pytest.raises(TypeError):
-        check_user_input(7000792289606361)  # type: ignore[arg-type]
-
-    with pytest.raises(TypeError):
-        check_user_input(73654108430135874305)  # type: ignore[arg-type]
-
-    with pytest.raises(TypeError):
-        check_user_input(None)  # type: ignore[arg-type]
+    with pytest.raises(result):
+        check_user_input(invalid_input)
 
 
 # Ниже декоратор для тестовой функции test_is_account.
@@ -132,12 +140,17 @@ def test_is_account(string: str, result: bool) -> None:
     assert is_account(string) == result
 
 
-def test_is_account_error() -> None:
+# Ниже декоратор для тестовой функции test_is_account_error.
+@pytest.mark.parametrize(
+    "invalid_input, result",
+    [
+        (73654108430135874305, TypeError),
+        (None, TypeError),
+    ],
+)
+def test_is_account_error(invalid_input: Any, result: type[TypeError]) -> None:
     """Проверяет, что возникнет ошибка, в том случае, если тип данных, переданных
     в функцию, будет не строковым."""
 
-    with pytest.raises(TypeError):
-        is_account(73654108430135874305)  # type: ignore[arg-type]
-
-    with pytest.raises(TypeError):
-        is_account(None)  # type: ignore[arg-type]
+    with pytest.raises(result):
+        is_account(invalid_input)
