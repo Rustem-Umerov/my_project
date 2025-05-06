@@ -1,33 +1,30 @@
 import re
 from datetime import datetime
 
-from src.masks import check_user_input, get_mask_account, get_mask_card_number
-
-LENGTH_OF_CARD_NUMBER = 16  # Константа указывающая длину номера банковской карты
-LENGTH_OF_ACCOUNT_NUMBER = 20  # Константа указывающая длину номера банковского счета
+from src.masks import (LENGTH_OF_ACCOUNT_NUMBER, LENGTH_OF_CARD_NUMBER, check_user_input, error_message,
+                       get_mask_account, get_mask_card_number, is_account)
 
 
 def mask_account_card(type_and_number: str) -> str:
     """Функция принимает один аргумент — строку, содержащую тип и номер карты или номер счета.
     Возвращает строку с замаскированным номером."""
 
-    if re.match(r"сч[её]т", type_and_number, re.IGNORECASE):
-        return re.sub(r"\d{20}", lambda m: get_mask_account(m.group(0)), type_and_number)
-    return re.sub(r"\d{16}", lambda m: get_mask_card_number(m.group(0)), type_and_number)
+    if is_account(type_and_number):
+        return re.sub(rf"\d{{{LENGTH_OF_ACCOUNT_NUMBER}}}", lambda m: get_mask_account(m.group(0)), type_and_number)
+    return re.sub(rf"\d{{{LENGTH_OF_CARD_NUMBER}}}", lambda m: get_mask_card_number(m.group(0)), type_and_number)
 
 
 def output_result(user_input: str) -> str:
     """Функция выводит итоговый результат.
-    Сначала данные проверяются. Потом происходит маскировка данных."""
+    Сначала данные проверяются, потом возвращает замаскированные данные
+    или ошибку при неверном формате"""
 
-    if re.match(r"сч[её]т", user_input, re.IGNORECASE):
-        correct_card = check_user_input(user_input, LENGTH_OF_ACCOUNT_NUMBER)
-        result_1 = mask_account_card(correct_card)
-        return result_1
+    correct_card = check_user_input(user_input)
 
-    correct_card = check_user_input(user_input, LENGTH_OF_CARD_NUMBER)
-    result_2 = mask_account_card(correct_card)
-    return result_2
+    if not correct_card:
+        raise ValueError(error_message())
+
+    return mask_account_card(user_input)
 
 
 def get_date(str_data: str) -> str:
