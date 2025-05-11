@@ -22,9 +22,30 @@ def transaction_descriptions(transactions: list[dict[str, Any]]) -> Iterator[str
 
 
 def card_number_generator(start: int, stop: int) -> Iterator[str]:
-    """Генератор, который выдает номера банковских карт в формате XXXX XXXX XXXX XXXX, где X — цифра номера карты.
+    """Генератор, который выдает номера банковских карт в формате XXXX XXXX XXXX XXXX, где X — цифра номера карты,
+    если указан правильный диапазон. Иначе, будет ошибка.
     Генератор может сгенерировать номера карт в заданном диапазоне от start до stop."""
 
+    if not _validate_range(start, stop):
+        error_msg = (
+            f"Некорректный диапазон генерации.\n"
+            f"Допустимый диапазон: 1 ≤ start ≤ stop ≤ 9999999999999999\n"
+            f"Вы ввели: : start={start}, stop={stop}"
+        )
+        raise ValueError(error_msg)
+
     for num in range(start, stop + 1):
-        str_number = f"{num:016d}"
-        yield f"{str_number[:4]} {str_number[4:8]} {str_number[8:12]} {str_number[12:]}"
+        yield _format_card_number(num)
+
+
+def _validate_range(start: int, stop: int) -> bool:
+    """Функция проверяет, соответствует ли указанный диапазон заданным критериям."""
+
+    return bool(1 <= start <= stop <= 9999999999999999)
+
+
+def _format_card_number(num: int) -> str:
+    """Функция форматирует число, как номер карты XXXX XXXX XXXX XXXX, где X — цифра номера карты"""
+
+    str_number = f"{num:016d}"
+    return f"{str_number[:4]} {str_number[4:8]} {str_number[8:12]} {str_number[12:]}"
