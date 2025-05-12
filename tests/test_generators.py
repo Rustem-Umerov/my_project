@@ -1,6 +1,7 @@
 import pytest
 
-from src.generators import _validate_range, card_number_generator, filter_by_currency, transaction_descriptions
+from src.generators import (_format_card_number, _validate_range, card_number_generator, filter_by_currency,
+                            transaction_descriptions)
 from tests.transactions import (RUB_TRANSACTIONS, TRANSACTIONS_WITHOUT_CURRENCY, TRANSACTIONS_WITHOUT_DESCRIPTION,
                                 USD_TRANSACTIONS)
 
@@ -162,3 +163,22 @@ def test__validate_range(start: int, stop: int, booleans: bool) -> None:
     входных данных, возвращает ответ: True или False."""
 
     assert _validate_range(start, stop) == booleans
+
+
+# Ниже декоратор для тестовой функции test__format_card_number.
+@pytest.mark.parametrize(
+    "num, result",
+    [
+        (1, "0000 0000 0000 0001"),
+        (55, "0000 0000 0000 0055"),
+        (999999999999999, "0999 9999 9999 9999"),
+        (9999999999999999, "9999 9999 9999 9999"),
+    ],
+)
+def test__format_card_number(num: int, result: str) -> None:
+    """Тест проверяет, что функция правильно форматирует число.
+    Должно быть, как номер карты XXXX XXXX XXXX XXXX, где X — цифра номера карты"""
+
+    formatted = _format_card_number(num)
+    assert formatted == result  # Проверка на корректное форматирование числа.
+    assert len(formatted) == 19  # Проверка длины отформатированного числа.
