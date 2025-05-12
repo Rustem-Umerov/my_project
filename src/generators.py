@@ -6,7 +6,7 @@ def filter_by_currency(transactions: list[dict[str, Any]], currency: str) -> Ite
     Функция возвращает итератор, который поочередно выдает транзакции, где валюта операции соответствует заданной"""
 
     filter_list_dict = filter(
-        lambda x: x.get("operationAmount", {}).get("currency", {}).get("code", "").lower() == currency.lower(),
+        lambda x: (x.get("operationAmount", {}).get("currency", {}).get("code") or "").lower() == currency.lower(),
         transactions,
     )
 
@@ -18,7 +18,11 @@ def transaction_descriptions(transactions: list[dict[str, Any]]) -> Iterator[str
     и возвращает описание каждой операции по очереди."""
 
     for item in transactions:
-        yield item.get("description", "")
+        description = item.get("description", "")
+        # Ниже условие проверяет, что description существует и не является ложным значением,
+        # а затем уже вызывается strip(), чтобы убедиться, что строка, очищенная от пробелов, также не пустая.
+        if description and description.strip():
+            yield description
 
 
 def card_number_generator(start: int, stop: int) -> Iterator[str]:
