@@ -1,6 +1,6 @@
 import pytest
 
-from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
+from src.generators import _validate_range, card_number_generator, filter_by_currency, transaction_descriptions
 from tests.transactions import (RUB_TRANSACTIONS, TRANSACTIONS_WITHOUT_CURRENCY, TRANSACTIONS_WITHOUT_DESCRIPTION,
                                 USD_TRANSACTIONS)
 
@@ -140,3 +140,25 @@ def test_card_number_generator_stop_iteration(start: int, stop: int, result: typ
 
     with pytest.raises(result):
         next(generator)
+
+
+# Ниже декоратор для тестовой функции test__validate_range.
+@pytest.mark.parametrize(
+    "start, stop, booleans",
+    [
+        (1, 10, True),
+        (1, 9999999999999999, True),
+        (1, 1, True),
+        (9999999999999999, 9999999999999999, True),
+        (-1, 10, False),
+        (9999999999999995, 10000000000000010, False),
+        (-10, 10000000000000010, False),
+        (10, 1, False),
+        (0, 10, False),
+    ],
+)
+def test__validate_range(start: int, stop: int, booleans: bool) -> None:
+    """Тест проверяет, что функция корректно проверяет входные данные и, в зависимости от
+    входных данных, возвращает ответ: True или False."""
+
+    assert _validate_range(start, stop) == booleans
