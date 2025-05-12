@@ -1,6 +1,6 @@
 import pytest
 
-from src.generators import filter_by_currency, transaction_descriptions
+from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
 from tests.transactions import (RUB_TRANSACTIONS, TRANSACTIONS_WITHOUT_CURRENCY, TRANSACTIONS_WITHOUT_DESCRIPTION,
                                 USD_TRANSACTIONS)
 
@@ -73,3 +73,70 @@ def test_transaction_descriptions_not_error(list_dict: list, result: list) -> No
     список словарей с транзакциями без описания или пустой список."""
 
     assert list(transaction_descriptions(list_dict)) == result
+
+
+# Ниже декоратор для тестовой функции test_card_number_generator.
+@pytest.mark.parametrize(
+    "start, stop, result",
+    [
+        (
+            1,
+            5,
+            [
+                "0000 0000 0000 0001",
+                "0000 0000 0000 0002",
+                "0000 0000 0000 0003",
+                "0000 0000 0000 0004",
+                "0000 0000 0000 0005",
+            ],
+        ),
+        (
+            9999999999999995,
+            9999999999999999,
+            [
+                "9999 9999 9999 9995",
+                "9999 9999 9999 9996",
+                "9999 9999 9999 9997",
+                "9999 9999 9999 9998",
+                "9999 9999 9999 9999",
+            ],
+        ),
+        (10, 10, ["0000 0000 0000 0010"]),
+    ],
+)
+def test_card_number_generator(start: int, stop: int, result: list[str]) -> None:
+    """Тест проверяет, что генератор выдает правильные номера карт в заданном диапазоне."""
+
+    assert list(card_number_generator(start, stop)) == result
+
+
+# Ниже декоратор для тестовой функции test_card_number_generator_error.
+@pytest.mark.parametrize(
+    "start, stop, error",
+    [(5, 1, ValueError), (0, 5, ValueError), (9999999999999995, 9999999999999910, ValueError), (-10, 10, ValueError)],
+)
+def test_card_number_generator_error(start: int, stop: int, error: type[ValueError]) -> None:
+    """Тест проверяет, что будет вызвана ошибка, если на вход поступят не корректные данные."""
+
+    with pytest.raises(error):
+        list(card_number_generator(start, stop))
+
+
+# Ниже декоратор для тестовой функции test_card_number_generator_stop_iteration.
+@pytest.mark.parametrize(
+    "start, stop, result",
+    [
+        (1, 1, StopIteration),
+        (156, 156, StopIteration),
+        (8596, 8596, StopIteration),
+    ],
+)
+def test_card_number_generator_stop_iteration(start: int, stop: int, result: type[StopIteration]) -> None:
+    """Тест проверяет, что после исчерпания всех элементов
+    дальнейшие вызовы next() выбрасывают исключение StopIteration"""
+
+    generator = card_number_generator(start, stop)
+    next(generator)  # Получает первый и единственный элемент генератора.
+
+    with pytest.raises(result):
+        next(generator)
