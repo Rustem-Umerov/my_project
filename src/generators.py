@@ -6,7 +6,7 @@ def filter_by_currency(transactions: list[dict[str, Any]], currency: str) -> Ite
     Функция возвращает итератор, который поочередно выдает транзакции, где валюта операции соответствует заданной"""
 
     filter_list_dict = filter(
-        lambda x: x.get("operationAmount", {}).get("currency", {}).get("name", "").lower() == currency.lower(),
+        lambda x: x.get("operationAmount", {}).get("currency", {}).get("code", "").lower() == currency.lower(),
         transactions,
     )
 
