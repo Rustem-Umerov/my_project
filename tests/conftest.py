@@ -1,5 +1,7 @@
 import pytest
 
+from tests.transactions import USD_RUB_TRANSACTIONS
+
 
 # Ниже fixture со списком разных словарей.
 @pytest.fixture
@@ -30,3 +32,9 @@ def list_dict_with_canceled_states() -> list[dict[str, int | str]]:
         {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
         {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
     ]
+
+
+# Ниже fixture возвращает константу USD_RUB_TRANSACTIONS.
+@pytest.fixture
+def transactions_list() -> list[dict[str, object]]:
+    return USD_RUB_TRANSACTIONS
