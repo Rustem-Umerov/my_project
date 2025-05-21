@@ -119,6 +119,76 @@ for number in card_number_generator(1, 5):
 0000 0000 0000 0005
 ```
 
+## Модуль decorators.py
+
+### Данный модуль содержит:
+- #### Декоратор log
+Декоратор лог логирует:
+* начало выполнения функции;
+* переданные позиционные и именованные аргументы;
+* успешное завершение с результатом.
+
+В случае, если возникнет исключение:
+* исключение, если оно возникает, с типом и трассировкой.
+
+## Примеры использования
+
+#### Декоратор log:
+
+```
+from src.decorators import log
+
+
+# Создаем дополнительную функцию для проверки декоратора.
+@log(filename=None)
+def add(a: float, b: float) -> float:
+    """Дополнительная функция, необходимая для тестирования логов из декоратора."""
+
+    return a + b
+
+# Вызываем функцию и передаем ей аргументы.
+add(5, 5)
+
+>>> Вывод:
+2025-05-21 14:21:20 [INFO ] decorators.wrapper:33 - Starting function add with arguments: args=(5, 5), kwargs={}
+2025-05-21 14:21:20 [INFO ] decorators.wrapper:37 - Function add completed successfully. Result: 10
+```
+```
+from src.decorators import log
+
+
+# Ниже будет проверен случай, когда есть исключение.
+# Создаем дополнительную функцию для проверки декоратора.
+@log(filename=None)
+def divide(a: float, b: float) -> float:
+    """Дополнительная функция, необходимая для тестирования логов из декоратора."""
+
+    return a / b
+
+# Вызываем функцию и передаем ей аргументы.
+divide(5, 0)
+
+>>> Вывод:
+2025-05-21 14:55:31 [INFO ] decorators.wrapper:33 - Starting function divide with arguments: args=(5, 0), kwargs={}
+2025-05-21 14:55:31 [ERROR] decorators.wrapper:41 - Error in function divide. Error type: ZeroDivisionError. Arguments: args=(5, 0), kwargs={}
+Traceback (most recent call last):
+  File "C:\Users\Rustem\PycharmProjects\PythonProject\file_8.py", line 36, in wrapper
+    result = func(*args, **kwargs)
+  File "C:\Users\Rustem\PycharmProjects\PythonProject\file_6.py", line 10, in divide
+    return a / b
+           ~~^~~
+ZeroDivisionError: division by zero
+Traceback (most recent call last):
+  File "C:\Users\Rustem\PycharmProjects\PythonProject\file_6.py", line 12, in <module>
+    divide(5, 0)
+    ~~~~~~^^^^^^
+  File "C:\Users\Rustem\PycharmProjects\PythonProject\file_8.py", line 36, in wrapper
+    result = func(*args, **kwargs)
+  File "C:\Users\Rustem\PycharmProjects\PythonProject\file_6.py", line 10, in divide
+    return a / b
+           ~~^~~
+ZeroDivisionError: division by zero
+```
 
 ## Тестирование:
 
