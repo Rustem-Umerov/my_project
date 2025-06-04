@@ -9,7 +9,7 @@ def get_logger(
     level: LogLevel = "INFO",
     log_file: str | None = None,
     fmt: str = "%(asctime)s [%(levelname)-5s] %(module)s.%(funcName)s:%(lineno)d - %(message)s",
-    mode: str = "a"
+    mode: str = "a",
 ) -> logging.Logger:
     """
     Универсальная настройка логгера для конкретного модуля.

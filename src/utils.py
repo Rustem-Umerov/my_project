@@ -31,14 +31,17 @@ def financial_operations(file_path: Path) -> list[dict]:
                 logger.debug("Данные успешно загружены из файла: %s", file_path)
                 return data
             else:
-                logger.error("Содержимое файла %s не является списком. Функция возвращает пустой список.", file_path)
+                logger.error(
+                    "Содержимое файла %s не является списком. Функция возвращает пустой список.",
+                    file_path)
                 return []
 
     # Ниже, помимо FileNotFoundError, также есть обработка json.JSONDecodeError – если JSON поврежден,
     # функция вернет пустой список, а не вызовет ошибку.
     except (FileNotFoundError, json.JSONDecodeError):
         logger.exception(
-            "Произошла ошибка при открытии или разборе файла %s. Функция возвращает пустой список.", file_path
+            "Произошла ошибка при открытии или разборе файла %s. Функция возвращает пустой список.",
+            file_path
         )
         return []
 
