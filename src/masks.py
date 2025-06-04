@@ -1,6 +1,7 @@
 import re
-from src.logger_config import get_logger
 from pathlib import Path
+
+from src.logger_config import get_logger
 
 LENGTH_OF_CARD_NUMBER = 16  # Константа указывающая длину номера банковской карты
 LENGTH_OF_ACCOUNT_NUMBER = 20  # Константа указывающая длину номера банковского счета
@@ -11,10 +12,11 @@ logs_file = logs_dir / "masks.log"
 
 logger = get_logger(
     __name__,
-    level="DEBUG" ,
+    level="DEBUG",
     log_file=str(logs_file),
-    fmt = "%(asctime)s - %(module)s - %(levelname)s - %(message)s",
-    mode="w")
+    fmt="%(asctime)s - %(module)s - %(levelname)s - %(message)s",
+    mode="w",
+)
 
 
 def is_account(text: str) -> bool:
