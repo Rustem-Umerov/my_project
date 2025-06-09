@@ -12,7 +12,7 @@ csv_file_path = my_project_dir / "files_with_financ_transactions" / "transaction
 excel_file_path = my_project_dir / "files_with_financ_transactions" / "transactions_excel.xlsx"
 
 
-def _detect_delimiter(file_path: Path, sample_size: int = 1024) -> str:
+def detect_delimiter(file_path: Path, sample_size: int = 1024) -> str:
     """Функция определяет разделитель в CSV-файле с помощью csv.Sniffer"""
 
     try:
@@ -46,7 +46,7 @@ def fin_trans_from_csv_file(file_path: Path) -> list[dict]:
 
     try:
         logger.info("Происходит открытие CSV-файла: %s", file_path)
-        delimiter = _detect_delimiter(file_path)
+        delimiter = detect_delimiter(file_path)
 
         df = pd.read_csv(file_path, sep=delimiter, encoding="utf-8")
         logger.info("CSV-файл успешно открыт. Информация из файла получена.")
@@ -54,7 +54,7 @@ def fin_trans_from_csv_file(file_path: Path) -> list[dict]:
         transactions_list = df.to_dict(orient="records")
 
         # Ниже вызываю функцию _validate_transactions_list для проверки содержит ли transactions_list данные.
-        _validate_transactions_list(transactions_list, file_path)
+        validate_transactions_list(transactions_list, file_path)
         return transactions_list
 
     except FileNotFoundError:
@@ -81,7 +81,7 @@ def fin_trans_from_excel_file(file_path: Path) -> list[dict]:
         transactions_list = excel_data.to_dict(orient="records")
 
         # Ниже вызываю функцию _validate_transactions_list для проверки содержит ли transactions_list данные.
-        _validate_transactions_list(transactions_list, file_path)
+        validate_transactions_list(transactions_list, file_path)
         return transactions_list
 
     except FileNotFoundError:
@@ -95,7 +95,7 @@ def fin_trans_from_excel_file(file_path: Path) -> list[dict]:
         raise
 
 
-def _validate_transactions_list(transactions_list: list, file_path: Path) -> None:
+def validate_transactions_list(transactions_list: list, file_path: Path) -> None:
     """Проверяет, содержит ли transactions_list данные.
     Если список пуст, пишет в лог и выбрасывает ValueError."""
 
