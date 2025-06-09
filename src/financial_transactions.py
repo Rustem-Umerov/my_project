@@ -1,6 +1,8 @@
 import csv
 from pathlib import Path
 
+import pandas as pd
+
 from src.logger_config import get_logger
 
 logger = get_logger(__name__)
@@ -45,22 +47,21 @@ def fin_trans_from_csv_file(file_path: Path) -> list[dict]:
         logger.info("Происходит открытие CSV-файла: %s", file_path)
         delimiter = _detect_delimiter(file_path)
 
-        with open(file_path, encoding="utf-8") as file:
-            reader = csv.DictReader(file, delimiter=delimiter)
+        df = pd.read_csv(file_path, sep=delimiter, encoding="utf-8")
+        logger.info("CSV-файл успешно открыт. Информация из файла получена.")
 
-            logger.info("CSV-файл успешно открыт. Информация из файла получена.")
-            transactions = list(reader)
+        transactions_list = df.to_dict(orient="records")
 
-            if not transactions:
-                logger.info("Файл %s не содержит данных", file_path)
-                raise ValueError("Файл %s не содержит данных", file_path)
+        if not transactions_list:
+            logger.info("Файл %s не содержит данных", file_path)
+            raise ValueError("Файл %s не содержит данных", file_path)
 
-            return transactions
+        return transactions_list
 
     except FileNotFoundError:
         logger.error("Файл %s не найден!", file_path)
         raise
-    except csv.Error as e:
+    except pd.errors.ParserError as e:
         logger.error("Ошибка в CSV-файле %s: %s", file_path, str(e))
         raise
     except Exception as e:
