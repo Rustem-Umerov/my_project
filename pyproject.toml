@@ -30,6 +30,7 @@ mypy = "^1.15.0"
 pytest = "^8.3.5"
 pytest-cov = "^6.1.1"
 types-requests = "^2.32.0.20250515"
+pandas-stubs = "^2.2.3.250527"
 
 [tool.black]
 line-length = 119
