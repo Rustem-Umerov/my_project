@@ -53,10 +53,8 @@ def fin_trans_from_csv_file(file_path: Path) -> list[dict]:
 
         transactions_list = df.to_dict(orient="records")
 
-        if not transactions_list:
-            logger.info("Файл %s не содержит данных", file_path)
-            raise ValueError("Файл %s не содержит данных", file_path)
-
+        # Ниже вызываю функцию _validate_transactions_list для проверки содержит ли transactions_list данные.
+        _validate_transactions_list(transactions_list, file_path)
         return transactions_list
 
     except FileNotFoundError:
@@ -82,10 +80,8 @@ def fin_trans_from_excel_file(file_path: Path) -> list[dict]:
         logger.info("Excel-файл успешно открыт. Информация из файла получена.")
         transactions_list = excel_data.to_dict(orient="records")
 
-        if not transactions_list:
-            logger.info("Файл %s не содержит данных", file_path)
-            raise ValueError("Файл %s не содержит данных", file_path)
-
+        # Ниже вызываю функцию _validate_transactions_list для проверки содержит ли transactions_list данные.
+        _validate_transactions_list(transactions_list, file_path)
         return transactions_list
 
     except FileNotFoundError:
@@ -97,3 +93,12 @@ def fin_trans_from_excel_file(file_path: Path) -> list[dict]:
     except Exception as e:
         logger.error("Неизвестная ошибка при чтении %s: %s", file_path, str(e))
         raise
+
+
+def _validate_transactions_list(transactions_list: list, file_path: Path) -> None:
+    """Проверяет, содержит ли transactions_list данные.
+    Если список пуст, пишет в лог и выбрасывает ValueError."""
+
+    if not transactions_list:
+        logger.info("Файл %s не содержит данных", file_path)
+        raise ValueError("Файл %s не содержит данных", file_path)
