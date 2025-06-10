@@ -39,7 +39,8 @@ def test_transaction_dict_input(input_dict: dict, result: float) -> None:
     - с не правильным значение у ключа amount
     - корректный словарь, со значением 'RUB' по ключу 'code'"""
 
-    assert transaction(input_dict) == result
+    with patch("src.external_api.convert_to_rub", return_value=31957.58):
+        assert transaction(input_dict) == result
 
 
 @pytest.mark.parametrize(

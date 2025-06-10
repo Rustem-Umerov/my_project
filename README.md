@@ -266,6 +266,63 @@ print("50 USD в рублях:", amount_in_rub)
 
 ```
 
+
+## Модуль financial_transactions.py
+
+### Данный модуль содержит:
+- #### Функции fin_trans_from_csv_file и fin_trans_from_csv_file
+
+Функция fin_trans_from_csv_file предназначена для чтения CSV-файла, содержащего финансовые транзакции. 
+Принимает путь к файлу CSV в качестве аргумента. Возвращает список словарей с транзакциями
+
+Обработка ошибок:
+Если файл не найден, генерируется и логируется исключение FileNotFoundError.
+ППри возникновении ошибки парсинга CSV-файла (pandas.errors.ParserError) логируется сообщение об ошибке, и исключение пробрасывается далее.
+При других непредвиденных ошибках происходит логирование и проброс общего исключения Exception.
+
+Функция fin_trans_from_excel_file считывает данные из Excel-файла, содержащего финансовые транзакции.
+Принимает путь к файлу Excel-файлу в качестве аргумента. Возвращает список словарей с транзакциями.
+
+Обработка ошибок:
+Если файл не найден, генерируется и логируется исключение FileNotFoundError.
+При возникновении ошибки парсинга Excel-файла (pandas.errors.ParserError) логируется сообщение об ошибке и исключение пробрасывается далее.
+При других непредвиденных ошибках происходит логирование и проброс общего исключения Exception.
+
+### Пример использования
+
+```
+from pathlib import Path
+from src.financial_transactions import fin_trans_from_csv_file
+
+# Укажите путь к вашему CSV-файлу
+csv_file_path = Path("data/transactions.csv")
+
+try:
+    transactions = fin_trans_from_csv_file(csv_file_path)
+    # transactions – это список словарей, где каждый словарь представляет отдельную транзакцию.
+    print("Транзакции успешно считаны:", transactions)
+except FileNotFoundError:
+    print(f"Файл {csv_file_path} не найден.")
+except Exception as e:
+    print("Ошибка при чтении CSV-файла:", str(e))
+```
+```
+from pathlib import Path
+from src.financial_transactions import fin_trans_from_excel_file
+
+# Укажите путь к вашему Excel-файлу
+excel_file_path = Path("data/transactions.xlsx")
+
+try:
+    transactions = fin_trans_from_excel_file(excel_file_path)
+    # transactions – это список транзакций, преобразованных из Excel в список словарей.
+    print("Транзакции успешно считаны:", transactions)
+except FileNotFoundError:
+    print(f"Файл {excel_file_path} не найден.")
+except Exception as e:
+    print("Ошибка при чтении Excel-файла:", str(e))
+```
+
 ## Тестирование:
 
 Чтобы установить pytest, используйте команду:
