@@ -7,7 +7,7 @@ import pytest
 from pandas.errors import ParserError
 from pytest import LogCaptureFixture
 
-from src.financial_transactions import detect_delimiter, fin_trans_from_csv_file
+from src.financial_transactions import detect_delimiter, fin_trans_from_csv_file, fin_trans_from_excel_file
 
 
 def fake_sniff(sample: str, delimiters: str) -> Any:
@@ -201,3 +201,89 @@ def test_fin_trans_from_csv_file_unknown_exception(caplog: LogCaptureFixture) ->
     assert "Неожиданная ошибка" in str(exc_info.value)
     # Если в логах присутствует фраза "Неизвестная ошибка при чтении", проверим её
     assert "Неизвестная ошибка при чтении" in caplog.text
+
+
+def test_fin_trans_from_excel_correct_file() -> None:
+    """
+    Тест проверяет корректное выполнение функции при корректно чтении Excel-файла.
+    Используются патчи для pd.read_excel и validate_transactions_list.
+    """
+    fake_path = Path("fake_transactions.xlsx")
+    # Пример списка со словарями транзакций.
+    fake_data = [
+        {"operation1": "A", "operation2": "B", "operation3": "C"},
+        {"operation1": "D", "operation2": "E", "operation3": "F"},
+    ]
+    # Создаю DataFrame из fake_data.
+    fake_data_frame = pd.DataFrame(fake_data)
+    expected_result = fake_data_frame.to_dict(orient="records")  # перевожу DataFrame в список словарей
+
+    with (
+        patch("src.financial_transactions.pd.read_excel", return_value=fake_data_frame) as mock_read_excel,
+        patch("src.financial_transactions.validate_transactions_list") as mock_validate,
+    ):
+        result = fin_trans_from_excel_file(fake_path)
+
+        # Сравниваю готовые списки.
+        assert result == expected_result
+
+        # Проверяю вызовы функций с нужными параметрами.
+        mock_read_excel.assert_called_once_with(fake_path)
+        mock_validate.assert_called_once_with(expected_result, fake_path)
+
+
+@pytest.mark.parametrize(
+    "log_message", ["Происходит открытие Excel-файла:", "Excel-файл успешно открыт. Информация из файла получена."]
+)
+def test_fin_trans_from_excel_correct_file_log_message(caplog: LogCaptureFixture, log_message: str) -> None:
+    """Тест проверяет, что при успешном чтении Excel-файла в логах присутствуют нужные сообщения."""
+
+    fake_path = Path("fake_transactions.xlsx")
+    # Пример списка со словарями транзакций.
+    fake_data = [
+        {"operation1": "A", "operation2": "B", "operation3": "C"},
+        {"operation1": "D", "operation2": "E", "operation3": "F"},
+    ]
+    # Создаю DataFrame из fake_data.
+    fake_data_frame = pd.DataFrame(fake_data)
+
+    with (
+        patch("src.financial_transactions.pd.read_excel", return_value=fake_data_frame),
+        patch("src.financial_transactions.validate_transactions_list"),
+    ):
+        caplog.clear()
+        fin_trans_from_excel_file(fake_path)
+
+    assert log_message in caplog.text
+
+
+def test_fin_trans_from_excel_file_file_not_found(caplog: LogCaptureFixture) -> None:
+    """
+    Тест проверяет, что при отсутствии Excel-файла функция логирует ошибку и выбрасывает FileNotFoundError.
+    """
+    fake_path = Path("nonexistent.xlsx")
+
+    with (
+        patch("src.financial_transactions.pd.read_excel", side_effect=FileNotFoundError("File not found")),
+        pytest.raises(FileNotFoundError) as exc_info,
+    ):
+        fin_trans_from_excel_file(fake_path)
+
+    assert "File not found" in str(exc_info.value)
+    assert "Файл", "не найден!" in caplog.text
+
+
+def test_fin_trans_from_excel_file_parser_error(caplog: LogCaptureFixture) -> None:
+    """
+    Тест проверяет, что при возникновении ошибки парсинга Excel-файла функция логирует ошибку и выбрасывает ParserError.
+    """
+    fake_path = Path("fake_transactions.xlsx")
+
+    with (
+        patch("src.financial_transactions.pd.read_excel", side_effect=ParserError("Ошибка парсинга")),
+        pytest.raises(ParserError) as exc_info,
+    ):
+        fin_trans_from_excel_file(fake_path)
+
+    assert "Ошибка парсинга" in str(exc_info.value)
+    assert "Ошибка при парсинге Excel-файла" in caplog.text

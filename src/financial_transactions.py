@@ -88,7 +88,7 @@ def fin_trans_from_excel_file(file_path: Path) -> list[dict]:
         logger.error("Файл %s не найден!", file_path)
         raise
     except pd.errors.ParserError as e:
-        logger.error(f"Ошибка при парсинге Excel-файла {file_path}: {str(e)}")
+        logger.error("Ошибка при парсинге Excel-файла %s: %s", file_path, str(e))
         raise
     except Exception as e:
         logger.error("Неизвестная ошибка при чтении %s: %s", file_path, str(e))
