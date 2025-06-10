@@ -7,7 +7,8 @@ import pytest
 from pandas.errors import ParserError
 from pytest import LogCaptureFixture
 
-from src.financial_transactions import detect_delimiter, fin_trans_from_csv_file, fin_trans_from_excel_file
+from src.financial_transactions import (detect_delimiter, fin_trans_from_csv_file, fin_trans_from_excel_file,
+                                        validate_transactions_list)
 
 
 def fake_sniff(sample: str, delimiters: str) -> Any:
@@ -287,3 +288,28 @@ def test_fin_trans_from_excel_file_parser_error(caplog: LogCaptureFixture) -> No
 
     assert "Ошибка парсинга" in str(exc_info.value)
     assert "Ошибка при парсинге Excel-файла" in caplog.text
+
+
+def test_validate_transactions_list(caplog: LogCaptureFixture) -> None:
+    """
+    Если список транзакций пуст, функция должна залогировать сообщение и выбросить ValueError.
+    """
+    fake_path = Path("fake_transactions.csv")
+    with pytest.raises(ValueError) as exc_info:
+        validate_transactions_list([], fake_path)
+
+    # Ниже проверяю, что текст исключения содержит указание на отсутствие данных
+    assert "Файл", "не содержит данных" in str(exc_info.value)
+    # Проверяем, что в логах содержится соответствующее сообщение
+    assert "Файл", "не содержит данных" in caplog.text
+
+
+def test_validate_transactions_list_non_empty_list() -> None:
+    """
+    Если список транзакций не пуст, функция не должна выбрасывать исключения.
+    """
+    fake_path = Path("fake_transactions.csv")
+    transactions = [{"operation": 1, "amount": 100}, {"operation": 2, "amount": 200}]
+
+    # Ниже функция возвращает не выбрасывает исключения, так как список не пустой.
+    validate_transactions_list(transactions, fake_path)
