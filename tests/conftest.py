@@ -38,3 +38,27 @@ def list_dict_with_canceled_states() -> list[dict[str, int | str]]:
 @pytest.fixture
 def transactions_list() -> list[dict[str, object]]:
     return USD_RUB_TRANSACTIONS
+
+
+@pytest.fixture
+def transaction_data() -> list[dict[str, str]]:
+    return [
+        {"description": "Перевод организации"},
+        {"description": "Перевод организации"},
+        {"description": "Открытие вклада"},
+        {"description": "Открытие вклада"},
+        {"description": "Перевод с карты на карту"},
+        {"description": "Перевод с карты на карту"},
+        {"description": "Перевод со счета на счет"},
+        {"description": "Перевод со счета на счет"},
+    ]
+
+
+@pytest.fixture
+def transaction_invalid_data() -> list[dict]:
+    return [
+        {},
+        {},
+        {"description": [123, "abc"]},
+        {"description": 12345},
+    ]
