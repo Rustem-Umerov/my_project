@@ -48,12 +48,12 @@ def main() -> None:
     """
 
     logger.info("Программа выводит меню.")
+    print()
     print(
-        """Привет! Добро пожаловать в программу работы с банковскими транзакциями.
-Выберите необходимый пункт меню:"""
-    )
+        """Привет! Добро пожаловать в программу работы с банковскими транзакциями.""")
+    print()
     print(
-        """
+        """Выберите необходимый пункт меню:
     1. Получить информацию о транзакциях из JSON-файла
     2. Получить информацию о транзакциях из CSV-файла
     3. Получить информацию о транзакциях из XLSX-файла
@@ -61,13 +61,22 @@ def main() -> None:
     )
 
     while True:
-        user_input = input("Ваш ответ (1-3): ").strip()
+        user_input = input().strip()
         if user_input.isdigit() and 1 <= int(user_input) <= 3:
             user_input_int: int = int(user_input)
             break
         print("Ошибка: нужно ввести число от 1 до 3.")
 
-    logger.info("Программа открывает, выбранный пользователем, файл.")
+    if user_input_int == 1:
+        print("Для обработки выбран JSON-файл.")
+        logger.info("Для обработки выбран JSON-файл.")
+    elif user_input_int == 2:
+        print("Для обработки выбран CSV-файл.")
+        logger.info("Для обработки выбран CSV-файл.")
+    else:
+        print("Для обработки выбран XLSX-файл.")
+        logger.info("Для обработки выбран XLSX-файл.")
+
     operations_list = LOAD_FILE[user_input_int]()
     logger.info("Программа считала информацию из файла.")
 
@@ -78,12 +87,13 @@ def main() -> None:
 Введите статус, по которому необходимо выполнить фильтрацию. 
 Доступные для фильтровки статусы: EXECUTED, CANCELED, PENDING
 """)
-        user_status = input("Ваш выбор: ").strip().upper()
+        user_status = input().strip()
+        user_status_upper = user_status.upper()
         print()
 
-        if user_status in VALID_STATUSES:
-            print(f'Операции отфильтрованы по статусу "{user_status}"')
-            operations_list = filter_by_state(operations_list, user_status)
+        if user_status_upper in VALID_STATUSES:
+            print(f'Операции отфильтрованы по статусу "{user_status_upper}"')
+            operations_list = filter_by_state(operations_list, user_status_upper)
             logger.info("Пользователь выбрал статус %s. Операции отфильтрованы по статусу.", user_status)
             break
         else:
@@ -92,13 +102,16 @@ def main() -> None:
     logger.info("Программа спрашивает у пользователя: Отсортировать операции по дате(Да/Нет)?")
     while True:
         print()
-        user_data_input = input("Отсортировать операции по дате? Да/Нет: ").strip().lower()
+        print("Отсортировать операции по дате? Да/Нет")
+        print()
+        user_data_input = input().strip().lower()
         if user_data_input == "да":
 
             logger.info("Пользователь хочет отсортировать операции по дате.")
             print()
             print("Отсортировать по возрастанию или по убыванию?")
-            user_sorted_input = input("Ваш ответ(по возрастанию/по убыванию): ").strip()
+            print()
+            user_sorted_input = input().strip()
             if user_sorted_input.lower() == "по возрастанию":
                 operations_list = sort_by_date(operations_list, False)
                 logger.info("Программа отсортировала операции по возрастанию.")
@@ -119,7 +132,9 @@ def main() -> None:
     logger.info("Программа спрашивает у пользователя: Выводить только рублевые транзакции(Да/Нет)?")
     while True:
         print()
-        user_currency_input = input("Выводить только рублевые транзакции? Да/Нет: ").strip()
+        print("Выводить только рублевые транзакции? Да/Нет")
+        print()
+        user_currency_input = input().strip()
         if user_currency_input.lower() == "да":
             operations_list = list(filter_by_currency(operations_list, "RUB"))
             logger.info("Пользователь выбирает, вывод только рублевых транзакции.")
@@ -135,9 +150,9 @@ def main() -> None:
     )
     while True:
         print()
-        user_input_filter_word = input(
-            "Отфильтровать список транзакций по определенному слову в описании? Да/Нет: "
-        ).strip()
+        print("Отфильтровать список транзакций по определенному слову в описании? Да/Нет")
+        print()
+        user_input_filter_word = input().strip()
         if user_input_filter_word.lower() in ["да", "нет"]:
             if user_input_filter_word == "да":
                 print()
