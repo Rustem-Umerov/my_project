@@ -3,17 +3,18 @@ from pathlib import Path
 
 from src.logger_config import get_logger
 
-logs_dir = Path(__file__).resolve().parent.parent / "logs"
-logs_dir.mkdir(parents=True, exist_ok=True)  # Создаем директорию, если отсутствует
-logs_file = logs_dir / "utils.log"
 
 logger = get_logger(
     __name__,
     level="DEBUG",
-    log_file=str(logs_file),
+    log_file="utils.log",
     fmt="%(asctime)s - %(module)s - %(levelname)s - %(message)s",
     mode="w",
 )
+
+base_dir = Path(__file__).resolve().parent  # Определяем базовый путь относительно текущего файла
+# Ниже формируем путь к json-файлу, который находится в папке 'data' внутри базовой директории
+json_path = base_dir.parent / "data" / "operations.json"
 
 
 def financial_operations(file_path: Path) -> list[dict]:
@@ -32,22 +33,13 @@ def financial_operations(file_path: Path) -> list[dict]:
                 return data
             else:
                 logger.error(
-                    "Содержимое файла %s не является списком. Функция возвращает пустой список.",
-                    file_path)
+                "Содержимое файла %s не является списком. Функция возвращает пустой список.", file_path)
                 return []
 
     # Ниже, помимо FileNotFoundError, также есть обработка json.JSONDecodeError – если JSON поврежден,
     # функция вернет пустой список, а не вызовет ошибку.
     except (FileNotFoundError, json.JSONDecodeError):
         logger.exception(
-            "Произошла ошибка при открытии или разборе файла %s. Функция возвращает пустой список.",
-            file_path
+        "Произошла ошибка при открытии или разборе файла %s. Функция возвращает пустой список.", file_path
         )
         return []
-
-
-base_dir = Path(__file__).resolve().parent  # Определяем базовый путь относительно текущего файла
-# Ниже формируем путь к json-файлу, который находится в папке 'data' внутри базовой директории
-json_path = base_dir.parent / "data" / "operations.json"
-
-financial_operations_result = financial_operations(json_path)

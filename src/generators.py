@@ -5,12 +5,14 @@ def filter_by_currency(transactions: list[dict[str, Any]], currency: str) -> Ite
     """Функция принимает на вход список словарей, представляющих транзакции.
     Функция возвращает итератор, который поочередно выдает транзакции, где валюта операции соответствует заданной"""
 
-    filter_list_dict = filter(
-        lambda x: (x.get("operationAmount", {}).get("currency", {}).get("code") or "").lower() == currency.lower(),
-        transactions,
-    )
+    for transact in transactions:
+        if "operationAmount" in transact:
+            currency_name = transact.get("operationAmount", {}).get("currency", {}).get("code")
+        else:
+            currency_name = transact.get("currency_code", "")
 
-    return filter_list_dict
+        if currency_name == currency:
+            yield transact
 
 
 def transaction_descriptions(transactions: list[dict[str, Any]]) -> Iterator[str]:

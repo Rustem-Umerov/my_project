@@ -8,8 +8,8 @@ from src.logger_config import get_logger
 logger = get_logger(__name__)
 
 my_project_dir = Path(__file__).resolve().parent.parent
-csv_file_path = my_project_dir / "files_with_financ_transactions" / "transactions.csv"
-excel_file_path = my_project_dir / "files_with_financ_transactions" / "transactions_excel.xlsx"
+csv_file_path = my_project_dir / "data" / "transactions.csv"
+excel_file_path = my_project_dir / "data" / "transactions_excel.xlsx"
 
 
 def detect_delimiter(file_path: Path, sample_size: int = 1024) -> str:
